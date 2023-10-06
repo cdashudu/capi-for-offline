@@ -14,7 +14,7 @@ This is a python script and will need [Python3 or higher installed](https://www.
 
 You need to udpate the config file with your config details which are need to make CAPI for Offline Calls. Below are all the sections and what needs to be in there.
 
-> Don't use single or double quotes in this fike
+> Don't use single or double quotes in this file
 
 #### dataset Section
 
@@ -24,7 +24,7 @@ You need to set your DATASET ID, API Version and Access Token here.
 
 Specify the path to the offline events CSV file
 
-#### user_data section
+#### [user_data section](#user_data-section)
 
 Specify the column name which has this data, e.g if the column user_email on csv stores the `email address`, set it as `email = user_email`. Set it to absent if it is not prsent in the CSV file
 
@@ -44,7 +44,7 @@ zip_code = absent
 country = absent
 ```
 
-#### optional_offline_custom_data section
+#### [optional_offline_custom_data section](#optional_offline_custom_data-section)
 
 Here you can specify all the optional custom data field you wish to send. Refer to the [developer doc](https://developers.facebook.com/docs/marketing-api/conversions-api/offline-events#custom-data-parameters) for all required and optional colum names.
 
@@ -90,11 +90,11 @@ Refer to the link above to check what each of the fields mean.
 
 #### User data
 
-Refer to the *user_data* section to check what columns you need to send any user data
+Refer to the [*user_data section*](#user_data-section) to check what columns you need to send any user data
 
 #### Custom data
 
-Refer to the *optional_offline_custom_data section* section to check what columns you need to send any custom data
+Refer to the [*optional_offline_custom_data section*](#optional_offline_custom_data-section) to check what columns you need to send any custom data
 
 
 #### Sample CSV file
