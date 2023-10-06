@@ -18,11 +18,32 @@ USER_DATA_SECTION = config.items('user_data')
 OPTIONAL_CUSTOM_DATA_SECTION = config.items('optional_offline_custom_data')
 REQUIRED_OFFINE_PARAMETERS_KEYS= ['event_time', 'event_name']
 REQUIRED_CUSTOM_PARAM_KEYS = ['currency', 'value']
-USER_DATA_KEYS = []
-OPTIONAL_CUSTOM_DATA_KEYS = []
+USER_DATA_COLUMN_NAME = []
+OPTIONAL_CUSTOM_DATA_COLUMN_NAME = []
 API_LOG_FILE_PATH = config['log_file']['path']
 API_LOG_FILE_NAME = config['log_file']['filemame']
 ACTION_SOURCE = "physical_store"
+
+OFFLINE_USER_DATA_COLUMN_NAME_MAPPING_TO_PAYLOAD_KEY = {
+    "email" : "em",
+    "phone_number" : "ph",
+    "first_name" : "fn",
+    "last_name" : "ln",
+    "gender" : "ge",
+    "data_of_birth" : "db",
+    "city " : "ct",
+    "state" : "st",
+    "zip_code" : "zp",
+    "country" : "country"
+}
+
+OFFLINE_CUSTOM_DATA_COLUMN_NAME_MAPPING_TO_PAYLOAD_KEY = {
+"content_type" : "content_type",
+"contents" : "contents",
+"custom_data" : "custom_data",
+"order_id" : "order_id",
+"item_number" : "item_number"
+}
 
 # Set up logging
 logging.basicConfig(filename=API_LOG_FILE_PATH + API_LOG_FILE_NAME,
@@ -31,20 +52,20 @@ logging.basicConfig(filename=API_LOG_FILE_PATH + API_LOG_FILE_NAME,
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
+USER_DATA_COLUMN_ENTRY = []
+CUSTOM_DATA_COLUMN_ENTRY = []
 
 # user data that is available in the csv file
 for key in USER_DATA_SECTION:
-    print(key)
-    if key[1] !== 'absent':
-      USER_DATA_KEYS.append(key[0])
-
-print(USER_DATA_KEYS)
+    if key[1] != 'absent':
+      USER_DATA_COLUMN_ENTRY.append(key)
+      USER_DATA_COLUMN_NAME.append(key[1])
 
 # custom data that is available in the csv file
 for key in OPTIONAL_CUSTOM_DATA_SECTION:
-    OPTIONAL_CUSTOM_DATA_KEYS.append(key[0])
-
-
+  if key[1] != 'absent':
+    CUSTOM_DATA_COLUMN_ENTRY.append(key)
+    OPTIONAL_CUSTOM_DATA_COLUMN_NAME.append(key[1])
 
 # opening the CSV file
 with open(OFFLINE_EVENTS_FILE, mode='r')as file:
@@ -69,14 +90,14 @@ with open(OFFLINE_EVENTS_FILE, mode='r')as file:
     exit()
 
   # Check if all user_data specified in the config file is present in the CSV File
-  if(all(header in offline_events_csv_file_headers for header in USER_DATA_KEYS)):
+  if(all(header in offline_events_csv_file_headers for header in USER_DATA_COLUMN_NAME)):
     logging.info("USER DATA IS PRESENT, GOING TO NEXT STEP")
   else:
     logging.error("USER DATA IS ABSENT, ABORTING")
     exit()
 
 # Check if all custom_data specified in the config file is present in the CSV File
-  if(all(header in offline_events_csv_file_headers for header in OPTIONAL_CUSTOM_DATA_KEYS)):
+  if(all(header in offline_events_csv_file_headers for header in OPTIONAL_CUSTOM_DATA_COLUMN_NAME)):
     logging.info("OPTIONAL DATA SPECFIED IN CONFIG IS PRESENT, GOING TO NEXT STEP")
   else:
     logging.error("OPTIONAL DATA SPECFIED IN CONFIG IS ABSENT, ABORTING")
@@ -99,12 +120,12 @@ with open(OFFLINE_EVENTS_FILE, mode='r')as file:
           capi_offline_data[key] = lines[key]
 
         # Get all user fields
-        for key in USER_DATA_KEYS:
-          user_data[key] = sha256(lines[key].encode('utf-8')).hexdigest()
+        for key in USER_DATA_COLUMN_ENTRY:
+          user_data[OFFLINE_USER_DATA_COLUMN_NAME_MAPPING_TO_PAYLOAD_KEY[key[0]]] = sha256(lines[key[1]].encode('utf-8')).hexdigest()
 
         # Get all optional fields
-        for key in OPTIONAL_CUSTOM_DATA_KEYS:
-          custom_data[key] = lines[key]
+        for key in CUSTOM_DATA_COLUMN_ENTRY:
+          custom_data[OFFLINE_CUSTOM_DATA_COLUMN_NAME_MAPPING_TO_PAYLOAD_KEY[key[0]]] = lines[key[1]]
 
         # Construct the payload
         capi_offline_data["user_data"] = user_data

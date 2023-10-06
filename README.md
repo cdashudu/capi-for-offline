@@ -1,8 +1,14 @@
 # Conversions API for Offline Events Python Script
 
-This python script is an example on how you can upload your offline events via Meta Conversions API for Offline. This is just a sample script and you can modify ths as per your use case.
+The goal of this script is to reduce the friction for Advertisers with offline store activities to be able to send offline events with Meta using Conversions API for Offline. A lot of clients do not have enough Dev Resources to develop a full blown Direct Integration for CAPI Offline and there are not enough partners supporting it. This script is a sample script which the advertisers can take and use it to send offline events with minimum lift and resources
+
+This is just a sample script and you can modify ths as per your use case. You can also schedule this script via Windows Scheduler or a Cron Job and it can run periodically to upload offline events
 
 ## Prerequisites
+
+### Python3
+
+This is a python script and will need [Python3 or higher installed](https://www.python.org/downloads/).
 
 ### Config file
 
@@ -20,60 +26,39 @@ Specify the path to the offline events CSV file
 
 #### user_data section
 
-Here you need to specify the user data columns that you will be sending. For example if you plan to send email and phone number, it will look something like this. The value can be null. It will be read from the CSV file
+Specify the column name which has this data, e.g if the column user_email on csv stores the `email address`, set it as `email = user_email`. Set it to absent if it is not prsent in the CSV file
+
+If your CSV file has only `email`, `phone` and `First Name`, then it will look like this. This list is all the possible user data you can send.
 
 ```
 [user_data]
-em = null #EMAIL
-ph = null #PHONE NUMBER
-```
-
-If your CSV fill have email, phone and First Name, then
-
-```
-[user_data]
-em = null #EMAIL
-ph = null #PHONE NUMBER
-fn = null # First Name
-```
-
-whatever fields you specify here needs to be present in the CSV file and the column name should be same as the key here. For exanple em, ph. Below is all the user data you can send and their field names
-
-```
-[user_data]
-em = null #EMAIL
-ph = null #PHONE NUMBER
-fn = null # First Name
-ln = null # Last Name
-ge = null # Gender
-db = null # Date of Birth
-ct = null # City
-st = null # State
-zp = null # Zip Code
-country = null # Country
+email = email
+phone_number = phone
+first_name = first_name
+last_name = absent
+gender = absent
+date_of_birth = absent
+city = absent
+state = absent
+zip_code = absent
+country = absent
 ```
 
 #### optional_offline_custom_data section
 
 Here you can specify all the optional custom data field you wish to send. Refer to the [developer doc](https://developers.facebook.com/docs/marketing-api/conversions-api/offline-events#custom-data-parameters) for all required and optional colum names.
 
-For example, if you want to send content_type and contents, it will look like this. The value can be null. It will be read from the CSV file
+For example, if the column product_content_type on csv stores the content_type, then `content_type = product_content_type`. Set it to absent if it is not prsent in the CSV file.
+
+If your CSV file has only `content_type`, and `contents`, then it will look like this. This list is all the possible user data you can send.
 
 ```
 [optional_offline_custom_data]
-content_type = null
-contents = null
-```
-
-whatever fields you specify here needs to be present in the CSV file and the column name should be same as the key here. Below is a list of all fields that you can add
-
-```
-[optional_offline_custom_data]
-content_type = null
-contents = null
-custom_data = null
-order_id = null
-item_number = null
+content_type = content_type
+contents = contents
+custom_data = absent
+order_id = absent
+item_number = absent
 ```
 
 Refer to the link above to check what each of the fields mean.
