@@ -29,12 +29,16 @@ logging.basicConfig(filename=API_LOG_FILE_PATH + API_LOG_FILE_NAME,
                     filemode='a',
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 
 # user data that is available in the csv file
 for key in USER_DATA_SECTION:
-    USER_DATA_KEYS.append(key[0])
+    print(key)
+    if key[1] !== 'absent':
+      USER_DATA_KEYS.append(key[0])
+
+print(USER_DATA_KEYS)
 
 # custom data that is available in the csv file
 for key in OPTIONAL_CUSTOM_DATA_SECTION:
